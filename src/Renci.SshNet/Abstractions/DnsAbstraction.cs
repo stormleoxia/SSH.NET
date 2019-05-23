@@ -35,6 +35,10 @@ namespace Renci.SshNet.Abstractions
         {
             // TODO Eliminate sync variant, and implement timeout
 
+            IPAddress address;
+            if (IPAddress.TryParse(hostNameOrAddress, out address))
+                return new[] { address };
+
 #if FEATURE_DNS_SYNC
             return Dns.GetHostAddresses(hostNameOrAddress);
 #elif FEATURE_DNS_APM
@@ -45,9 +49,6 @@ namespace Renci.SshNet.Abstractions
 #elif FEATURE_DNS_TAP
             return Dns.GetHostAddressesAsync(hostNameOrAddress).GetAwaiter().GetResult();
 #else
-            IPAddress address;
-            if (IPAddress.TryParse(hostNameOrAddress, out address))
-                return new [] { address};
 
 #if FEATURE_DEVICEINFORMATION_APM
             var resolveCompleted = new ManualResetEvent(false);
